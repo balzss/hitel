@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { convertTotalMonthsToYearsAndMonths, convertYearsAndMonthsToTotal } from '@/lib/mortgage-calculations'
 import useMortgageStorage from '@/hooks/use-mortgage-storage'
 import { type Language } from '@/lib/i18n'
@@ -15,8 +15,11 @@ interface UseMortgageInputsProps {
 
 export function useMortgageInputs({ language, onValuesChange }: UseMortgageInputsProps) {
   const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
   const [storedData, updateStoredData] = useMortgageStorage()
   const localStorageTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const [isResetting, setIsResetting] = useState(false)
 
   // Input states
   const [loanAmount, setLoanAmount] = useState('')
@@ -81,14 +84,26 @@ export function useMortgageInputs({ language, onValuesChange }: UseMortgageInput
       clearTimeout(localStorageTimeoutRef.current)
     }
 
+    // Set reset flag to prevent re-initialization
+    setIsResetting(true)
+
+    // Always clear form data
     setLoanAmount('')
     setLoanTermYears('')
     setLoanTermMonths('')
     setInterestRate('')
-  }, [])
+
+    // Always clear URL parameters if they exist
+    if (window.location.search) {
+      router.push(pathname)
+    }
+  }, [router, pathname])
 
   // Initialize state from URL params and localStorage
   useEffect(() => {
+    // Skip initialization if we're in the middle of a reset
+    if (isResetting) return
+
     const urlLoanAmount = searchParams.get('amt')
     const urlTotalMonths = searchParams.get('term')
     const urlInterestRate = searchParams.get('rate')
@@ -107,6 +122,13 @@ export function useMortgageInputs({ language, onValuesChange }: UseMortgageInput
 
     setInterestRate(urlInterestRate || storedData.interestRate)
   }, [searchParams, storedData])
+
+  // Clear reset flag when URL is clean (after reset navigation)
+  useEffect(() => {
+    if (isResetting && !window.location.search) {
+      setIsResetting(false)
+    }
+  }, [isResetting, searchParams])
 
   // Optimized localStorage sync
   const localStorageValues = useMemo(() => ({

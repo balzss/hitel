@@ -1,6 +1,10 @@
 # Hitel Kalkulátor / Mortgage Calculator
 
-A modern, responsive mortgage calculator built with Next.js that helps users calculate loan payments, visualize amortization schedules, and analyze mortgage scenarios.
+A modern, responsive mortgage calculator that helps users calculate loan payments, visualize amortization schedules, and analyze mortgage scenarios.
+
+## Demo
+
+[https://balzss.github.io/hitel](https://balzss.github.io/hitel)
 
 ## Features
 
@@ -40,7 +44,3 @@ A modern, responsive mortgage calculator built with Next.js that helps users cal
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
-
-## License
-
-This project is private and not licensed for public use.
