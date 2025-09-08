@@ -61,7 +61,7 @@ export function CalculatorHeader({
       await navigator.clipboard.writeText(shareableUrl)
       setIsShareDialogOpen(false)
       toast.success(t.urlCopied)
-    } catch (_err) {
+    } catch {
       toast.error('Failed to copy URL')
     }
   }
@@ -75,7 +75,7 @@ export function CalculatorHeader({
           url: shareableUrl,
         })
         setIsShareDialogOpen(false)
-      } catch (_err) {
+      } catch {
         console.log('Share cancelled')
       }
     }

@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Hitel kalkulátor",
+  title: "Lakáshitel kalkulátor",
   description: "Számítsa ki havi törlesztőrészletét, kamatterhét és törlesztési ütemtervét.",
   icons: {
     icon: '/real-estate-128.png'

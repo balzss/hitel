@@ -56,17 +56,25 @@ export interface Translations {
   months: string
   enterTotalMonthsPlaceholder: string
 
-  // Table footer
-  yearlyPaymentsNote: string
-  fullScheduleNote: string
+  // Collapsible table controls
+  expandAll: string
+  collapseAll: string
+  year: string
+  paymentsCount: string
+  total: string
+  downloadCsv: string
+
+  // Chart labels
+  principalVsInterest: string
+  balanceInterestPayment: string
 }
 
 export const translations: Record<Language, Translations> = {
   hu: {
-    pageTitle: "Lakáshitel Kalkulátor",
+    pageTitle: "Lakáshitel kalkulátor",
     pageDescription: "Egyszerű és gyors magyar lakáshitel kalkulátor. Számítsa ki havi törlesztőrészletét, kamatterhét és törlesztési ütemtervét.",
 
-    title: "Lakáshitel Kalkulátor",
+    title: "Lakáshitel kalkulátor",
 
     loanAmount: "Hitel összege (millió)",
     loanTermMonths: "Összes hónap",
@@ -108,8 +116,15 @@ export const translations: Record<Language, Translations> = {
     months: "hónap",
     enterTotalMonthsPlaceholder: "Vagy add meg hónapban",
 
-    yearlyPaymentsNote: "10 évnél hosszabb hiteleknél éves törlesztések láthatók.",
-    fullScheduleNote: "A teljes ütemterv {count} törlesztést tartalmaz."
+    expandAll: "Összes kinyitása",
+    collapseAll: "Összes bezárása",
+    year: "év",
+    paymentsCount: "fizetés",
+    total: "Összesen",
+    downloadCsv: "CSV letöltése",
+
+    principalVsInterest: "Tőke vs Kamat",
+    balanceInterestPayment: "Egyenleg, Kamat és Törlesztés"
   },
 
   en: {
@@ -158,8 +173,15 @@ export const translations: Record<Language, Translations> = {
     months: "months",
     enterTotalMonthsPlaceholder: "Or enter total months",
 
-    yearlyPaymentsNote: "Showing yearly payments for loans longer than 10 years.",
-    fullScheduleNote: "Full schedule contains {count} payments."
+    expandAll: "Expand All",
+    collapseAll: "Collapse All",
+    year: "Year",
+    paymentsCount: "payments",
+    total: "Total",
+    downloadCsv: "Download CSV",
+
+    principalVsInterest: "Principal vs Interest",
+    balanceInterestPayment: "Balance, Interest & Payment"
   }
 }
 

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useMemo, useCallback, useState } from 'react'
+import React, { useMemo, useCallback, useState } from 'react'
 
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
@@ -145,10 +145,12 @@ export function MortgageCalculator({ language, onValuesChange }: MortgageCalcula
               formatCurrency={formatCurrencyValue}
             />
 
+            <Separator />
             <AmortizationSchedule
               language={language}
               calculation={calculation}
               formatCurrency={formatCurrencyValue}
+              loanAmount={parseFloat(loanAmount)}
             />
           </>
         )}
