@@ -15,8 +15,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mortgage Calculator | Hitel Kalkulátor",
-  description: "Hungarian mortgage calculator. Calculate your monthly payment, interest costs, and amortization schedule. | Magyar lakáshitel kalkulátor. Számítsa ki havi törlesztőrészletét, kamatterhét és törlesztési ütemtervét.",
+  title: "Hitel kalkulátor",
+  description: "Számítsa ki havi törlesztőrészletét, kamatterhét és törlesztési ütemtervét.",
+  icons: {
+    icon: '/real-estate-128.png'
+  }
 };
 
 export default function RootLayout({

@@ -87,6 +87,35 @@ export function CalculatorHeader({
     <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
       <h1 className="text-3xl font-bold tracking-tight">{t.title}</h1>
       <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="icon"
+          asChild
+        >
+          <Link
+            href="https://github.com/balzss/hitel"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="View source on GitHub"
+          >
+            <Github className="h-4 w-4" />
+          </Link>
+        </Button>
+        <ThemeToggle />
+        <Select value={language} onValueChange={onLanguageChange}>
+          <SelectTrigger >
+            <SelectValue>
+              <div className="flex items-center gap-2">
+                <Globe />
+                {getLanguageDisplayName(language)}
+              </div>
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="hu">{getLanguageDisplayName('hu')}</SelectItem>
+            <SelectItem value="en">{getLanguageDisplayName('en')}</SelectItem>
+          </SelectContent>
+        </Select>
         <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="outline">
@@ -122,35 +151,6 @@ export function CalculatorHeader({
             </DialogFooter>
           </DialogContent>
         </Dialog>
-        <Select value={language} onValueChange={onLanguageChange}>
-          <SelectTrigger >
-            <SelectValue>
-              <div className="flex items-center gap-2">
-                <Globe />
-                {getLanguageDisplayName(language)}
-              </div>
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="hu">{getLanguageDisplayName('hu')}</SelectItem>
-            <SelectItem value="en">{getLanguageDisplayName('en')}</SelectItem>
-          </SelectContent>
-        </Select>
-        <ThemeToggle />
-        <Button
-          variant="outline"
-          size="icon"
-          asChild
-        >
-          <Link
-            href="https://github.com/balzss/hitel"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="View source on GitHub"
-          >
-            <Github className="h-4 w-4" />
-          </Link>
-        </Button>
       </div>
     </div>
   )
