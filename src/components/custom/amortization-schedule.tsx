@@ -130,14 +130,15 @@ export function AmortizationSchedule({ language, calculation, formatCurrency, lo
         </div>
 
         <div className="rounded-md border">
-          <div className="p-4 border-b">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-medium">{t.amortizationSchedule}</h3>
+          <div className="p-3 md:p-4 border-b">
+            <div className="flex flex-col space-y-2 md:flex-row md:justify-between md:items-center md:space-y-0">
+              <h3 className="text-base md:text-lg font-medium">{t.amortizationSchedule}</h3>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={downloadCsv}
+                  className="text-xs md:text-sm"
                 >
                   <Download />
                   {t.downloadCsv}
@@ -146,8 +147,12 @@ export function AmortizationSchedule({ language, calculation, formatCurrency, lo
                   variant="outline"
                   size="sm"
                   onClick={toggleAllYears}
+                  className="text-xs md:text-sm"
                 >
-                  {expandedYears.size === Object.keys(paymentsByYear).length ? <Minimize2 /> : <Maximize2 />}
+                  {expandedYears.size === Object.keys(paymentsByYear).length ?
+                    <Minimize2 className="h-3 w-3 md:h-4 md:w-4" /> :
+                    <Maximize2 className="h-3 w-3 md:h-4 md:w-4" />
+                  }
                   {expandedYears.size === Object.keys(paymentsByYear).length ? t.collapseAll : t.expandAll}
                 </Button>
               </div>
@@ -166,46 +171,74 @@ export function AmortizationSchedule({ language, calculation, formatCurrency, lo
                 <div key={year} className="border-b last:border-b-0">
                   <button
                     onClick={() => toggleYear(year)}
-                    className="w-full p-4 text-left hover:bg-muted/50 transition-colors flex items-center justify-between"
+                    className="w-full p-3 md:p-4 text-left hover:bg-muted/50 transition-colors"
                   >
-                    <div className="flex items-center space-x-2">
-                      <ChevronRight
-                        className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
-                      />
-                      <span className="font-medium">
-                        {language === 'hu' ? `${year}. ${t.year}` : `${t.year} ${year}`}
-                      </span>
-                      <span className="text-sm text-muted-foreground">
-                        ({payments.length} {t.paymentsCount})
-                      </span>
+                    {/* Mobile layout: Two columns */}
+                    <div className="grid grid-cols-2 gap-3 md:hidden">
+                      {/* Left column: Year and chevron */}
+                      <div className="flex flex-col space-y-1">
+                        <div className="flex items-center space-x-2">
+                          <ChevronRight
+                            className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                          />
+                          <span className="font-medium text-sm">
+                            {language === 'hu' ? `${year}. ${t.year}` : `${t.year} ${year}`}
+                          </span>
+                        </div>
+                        <span className="text-xs text-muted-foreground ml-6">
+                          {payments.length} {t.paymentsCount}
+                        </span>
+                      </div>
+
+                      {/* Right column: Financial data stacked */}
+                      <div className="flex flex-col space-y-1 text-xs">
+                        <span className="truncate">{t.total}: {formatCurrency(yearTotal)}</span>
+                        <span className="truncate">{t.principal}: {formatCurrency(yearPrincipal)}</span>
+                        <span className="truncate">{t.interest}: {formatCurrency(yearInterest)}</span>
+                      </div>
                     </div>
-                    <div className="flex space-x-4 text-sm">
-                      <span>{t.total}: {formatCurrency(yearTotal)}</span>
-                      <span>{t.principal}: {formatCurrency(yearPrincipal)}</span>
-                      <span>{t.interest}: {formatCurrency(yearInterest)}</span>
+
+                    {/* Desktop layout: Single row */}
+                    <div className="hidden md:flex md:items-center md:justify-between">
+                      <div className="flex items-center space-x-2">
+                        <ChevronRight
+                          className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                        />
+                        <span className="font-medium">
+                          {language === 'hu' ? `${year}. ${t.year}` : `${t.year} ${year}`}
+                        </span>
+                        <span className="text-sm text-muted-foreground">
+                          ({payments.length} {t.paymentsCount})
+                        </span>
+                      </div>
+                      <div className="flex space-x-4 text-sm">
+                        <span>{t.total}: {formatCurrency(yearTotal)}</span>
+                        <span>{t.principal}: {formatCurrency(yearPrincipal)}</span>
+                        <span>{t.interest}: {formatCurrency(yearInterest)}</span>
+                      </div>
                     </div>
                   </button>
 
                   {isExpanded && (
-                    <div className="px-4 pb-4">
+                    <div className="px-2 pb-2 md:px-4 md:pb-4">
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>{t.month}</TableHead>
-                            <TableHead>{t.payment}</TableHead>
-                            <TableHead>{t.principal}</TableHead>
-                            <TableHead>{t.interest}</TableHead>
-                            <TableHead>{t.balance}</TableHead>
+                            <TableHead className="text-xs md:text-sm">{t.month}</TableHead>
+                            <TableHead className="text-xs md:text-sm">{t.payment}</TableHead>
+                            <TableHead className="text-xs md:text-sm">{t.principal}</TableHead>
+                            <TableHead className="text-xs md:text-sm">{t.interest}</TableHead>
+                            <TableHead className="text-xs md:text-sm">{t.balance}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {payments.map((payment) => (
                             <TableRow key={payment.month}>
-                              <TableCell>{payment.month}</TableCell>
-                              <TableCell>{formatCurrency(payment.payment)}</TableCell>
-                              <TableCell>{formatCurrency(payment.principal)}</TableCell>
-                              <TableCell>{formatCurrency(payment.interest)}</TableCell>
-                              <TableCell>{formatCurrency(payment.balance)}</TableCell>
+                              <TableCell className="text-xs md:text-sm">{payment.month}</TableCell>
+                              <TableCell className="text-xs md:text-sm">{formatCurrency(payment.payment)}</TableCell>
+                              <TableCell className="text-xs md:text-sm">{formatCurrency(payment.principal)}</TableCell>
+                              <TableCell className="text-xs md:text-sm">{formatCurrency(payment.interest)}</TableCell>
+                              <TableCell className="text-xs md:text-sm">{formatCurrency(payment.balance)}</TableCell>
                             </TableRow>
                           ))}
                         </TableBody>

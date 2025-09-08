@@ -20,6 +20,7 @@ export function useMortgageInputs({ language, onValuesChange }: UseMortgageInput
   const [storedData, updateStoredData] = useMortgageStorage()
   const localStorageTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const [isResetting, setIsResetting] = useState(false)
+  const shouldIgnoreUrlParams = useRef(false)
 
   // Input states
   const [loanAmount, setLoanAmount] = useState('')
@@ -38,32 +39,57 @@ export function useMortgageInputs({ language, onValuesChange }: UseMortgageInput
   const handleLoanAmountChange = useCallback((value: string) => {
     if (value === '') {
       setLoanAmount('')
-      return
+    } else {
+      const numValue = parseFloat(value)
+      if (!isNaN(numValue) && numValue >= 0) {
+        setLoanAmount(value)
+      }
     }
-
-    const numValue = parseFloat(value)
-    if (!isNaN(numValue) && numValue >= 0) {
-      setLoanAmount(value)
+    
+    // Mark that we should ignore URL params from now on and clear URL
+    if (!shouldIgnoreUrlParams.current && window.location.search) {
+      shouldIgnoreUrlParams.current = true
+      // Clear URL asynchronously to not interfere with input
+      setTimeout(() => {
+        router.push(pathname)
+      }, 0)
     }
-  }, [])
+  }, [router, pathname])
 
   const handleInterestRateChange = useCallback((value: string) => {
     if (value === '') {
       setInterestRate('')
-      return
+    } else {
+      const numValue = parseFloat(value)
+      if (!isNaN(numValue) && numValue >= 0) {
+        setInterestRate(value)
+      }
     }
-
-    const numValue = parseFloat(value)
-    if (!isNaN(numValue) && numValue >= 0) {
-      setInterestRate(value)
+    
+    // Mark that we should ignore URL params from now on and clear URL
+    if (!shouldIgnoreUrlParams.current && window.location.search) {
+      shouldIgnoreUrlParams.current = true
+      // Clear URL asynchronously to not interfere with input
+      setTimeout(() => {
+        router.push(pathname)
+      }, 0)
     }
-  }, [])
+  }, [router, pathname])
 
   // Handle year selection - update months accordingly
   const handleYearChange = useCallback((yearValue: string) => {
     setLoanTermYears(yearValue)
     setLoanTermMonths('0') // Reset months when selecting a predefined year
-  }, [])
+    
+    // Mark that we should ignore URL params from now on and clear URL
+    if (!shouldIgnoreUrlParams.current && window.location.search) {
+      shouldIgnoreUrlParams.current = true
+      // Clear URL asynchronously to not interfere with input
+      setTimeout(() => {
+        router.push(pathname)
+      }, 0)
+    }
+  }, [router, pathname])
 
   // Handle month change - simplified to just set total months
   const handleMonthChange = useCallback((monthValue: string) => {
@@ -77,7 +103,16 @@ export function useMortgageInputs({ language, onValuesChange }: UseMortgageInput
       setLoanTermYears('')
       setLoanTermMonths('')
     }
-  }, [])
+    
+    // Mark that we should ignore URL params from now on and clear URL
+    if (!shouldIgnoreUrlParams.current && window.location.search) {
+      shouldIgnoreUrlParams.current = true
+      // Clear URL asynchronously to not interfere with input
+      setTimeout(() => {
+        router.push(pathname)
+      }, 0)
+    }
+  }, [router, pathname])
 
   const handleReset = useCallback(() => {
     if (localStorageTimeoutRef.current) {
@@ -86,6 +121,7 @@ export function useMortgageInputs({ language, onValuesChange }: UseMortgageInput
 
     // Set reset flag to prevent re-initialization
     setIsResetting(true)
+    shouldIgnoreUrlParams.current = false
 
     // Always clear form data
     setLoanAmount('')
@@ -101,27 +137,36 @@ export function useMortgageInputs({ language, onValuesChange }: UseMortgageInput
 
   // Initialize state from URL params and localStorage
   useEffect(() => {
-    // Skip initialization if we're in the middle of a reset
-    if (isResetting) return
+    // Skip initialization if we're in the middle of a reset or should ignore URL params
+    if (isResetting || shouldIgnoreUrlParams.current) return
 
     const urlLoanAmount = searchParams.get('amt')
     const urlTotalMonths = searchParams.get('term')
     const urlInterestRate = searchParams.get('rate')
 
-    setLoanAmount(urlLoanAmount || storedData.loanAmount)
+    // Check if we have URL parameters
+    const hasUrlParams = !!(urlLoanAmount || urlTotalMonths || urlInterestRate)
 
-    if (urlTotalMonths) {
-      const totalMonths = parseInt(urlTotalMonths)
-      const { years, months } = convertTotalMonthsToYearsAndMonths(totalMonths)
-      setLoanTermYears(years.toString())
-      setLoanTermMonths(months.toString())
+    if (hasUrlParams) {
+      // Load from URL parameters
+      setLoanAmount(urlLoanAmount || '')
+
+      if (urlTotalMonths) {
+        const totalMonths = parseInt(urlTotalMonths)
+        const { years, months } = convertTotalMonthsToYearsAndMonths(totalMonths)
+        setLoanTermYears(years.toString())
+        setLoanTermMonths(months.toString())
+      }
+
+      setInterestRate(urlInterestRate || '')
     } else {
+      // Load from localStorage when no URL parameters
+      setLoanAmount(storedData.loanAmount)
       setLoanTermYears(storedData.loanTermYears)
       setLoanTermMonths(storedData.loanTermMonths)
+      setInterestRate(storedData.interestRate)
     }
-
-    setInterestRate(urlInterestRate || storedData.interestRate)
-  }, [searchParams, storedData])
+  }, [searchParams, storedData, isResetting])
 
   // Clear reset flag when URL is clean (after reset navigation)
   useEffect(() => {

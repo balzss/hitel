@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   title: "Lakáshitel kalkulátor",
   description: "Számítsa ki havi törlesztőrészletét, kamatterhét és törlesztési ütemtervét.",
   icons: {
-    icon: '/real-estate-128.png'
+    icon: '/icon-128.png'
   }
 };
 

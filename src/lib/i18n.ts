@@ -119,7 +119,7 @@ export const translations: Record<Language, Translations> = {
     expandAll: "Összes kinyitása",
     collapseAll: "Összes bezárása",
     year: "év",
-    paymentsCount: "fizetés",
+    paymentsCount: "befizetés",
     total: "Összesen",
     downloadCsv: "CSV letöltése",
 

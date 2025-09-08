@@ -144,7 +144,7 @@ export function CalculatorHeader({
                   {t.shareVia}
                 </Button>
               )}
-              <Button onClick={handleCopyUrl}>
+              <Button onClick={handleCopyUrl} variant="outline">
                 <Clipboard />
                 {t.copyUrl}
               </Button>
