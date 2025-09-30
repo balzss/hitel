@@ -4,6 +4,7 @@ export interface AmortizationPayment {
   principal: number
   interest: number
   balance: number
+  adjustedPropertyValue?: number
 }
 
 export interface MortgageCalculation {
@@ -18,6 +19,8 @@ export interface MortgageInputValues {
   loanTermYears: string
   loanTermMonths: string
   interestRate: string
+  currentPropertyValue?: string
+  expectedYearlyInflation?: string
 }
 
 export interface ValidationErrors {

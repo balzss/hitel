@@ -56,6 +56,11 @@ export function AmortizationSchedule({ language, calculation, formatCurrency, lo
     }
   }
 
+  // Check if we have inflation data
+  const hasInflationData = useMemo(() => {
+    return calculation.amortizationSchedule.some(payment => payment.adjustedPropertyValue !== undefined)
+  }, [calculation])
+
   const downloadCsv = () => {
     // Create CSV headers
     const headers = [
@@ -66,14 +71,26 @@ export function AmortizationSchedule({ language, calculation, formatCurrency, lo
       t.balance
     ]
 
+    if (hasInflationData) {
+      headers.push(t.adjustedPropertyValue)
+    }
+
     // Create CSV rows
-    const rows = calculation.amortizationSchedule.map(payment => [
-      payment.month.toString(),
-      payment.payment.toFixed(2),
-      payment.principal.toFixed(2),
-      payment.interest.toFixed(2),
-      payment.balance.toFixed(2)
-    ])
+    const rows = calculation.amortizationSchedule.map(payment => {
+      const row = [
+        payment.month.toString(),
+        payment.payment.toFixed(2),
+        payment.principal.toFixed(2),
+        payment.interest.toFixed(2),
+        payment.balance.toFixed(2)
+      ]
+
+      if (hasInflationData && payment.adjustedPropertyValue !== undefined) {
+        row.push(payment.adjustedPropertyValue.toFixed(2))
+      }
+
+      return row
+    })
 
     // Combine headers and rows
     const csvContent = [headers, ...rows]
@@ -95,7 +112,7 @@ export function AmortizationSchedule({ language, calculation, formatCurrency, lo
   return (
     <Collapsible open={showDetails} onOpenChange={setShowDetails}>
       <CollapsibleTrigger asChild>
-        <Button variant="outline" className="w-full">
+        <Button variant="outline" className="w-full mt-6">
           {showDetails ? (
             <>
               <ChevronUp />
@@ -229,6 +246,9 @@ export function AmortizationSchedule({ language, calculation, formatCurrency, lo
                             <TableHead className="text-xs md:text-sm">{t.principal}</TableHead>
                             <TableHead className="text-xs md:text-sm">{t.interest}</TableHead>
                             <TableHead className="text-xs md:text-sm">{t.balance}</TableHead>
+                            {hasInflationData && (
+                              <TableHead className="text-xs md:text-sm">{t.adjustedPropertyValue}</TableHead>
+                            )}
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -239,6 +259,9 @@ export function AmortizationSchedule({ language, calculation, formatCurrency, lo
                               <TableCell className="text-xs md:text-sm">{formatCurrency(payment.principal)}</TableCell>
                               <TableCell className="text-xs md:text-sm">{formatCurrency(payment.interest)}</TableCell>
                               <TableCell className="text-xs md:text-sm">{formatCurrency(payment.balance)}</TableCell>
+                              {hasInflationData && payment.adjustedPropertyValue !== undefined && (
+                                <TableCell className="text-xs md:text-sm">{formatCurrency(payment.adjustedPropertyValue)}</TableCell>
+                              )}
                             </TableRow>
                           ))}
                         </TableBody>

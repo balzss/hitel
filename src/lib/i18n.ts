@@ -67,6 +67,17 @@ export interface Translations {
   // Chart labels
   principalVsInterest: string
   balanceInterestPayment: string
+
+  // Advanced features
+  advancedFeatures: string
+  advancedSettings: string
+
+  // Inflation calculator
+  inflationCalculatorTitle: string
+  currentPropertyValue: string
+  expectedYearlyInflation: string
+  adjustedPropertyValue: string
+  netEquity: string
 }
 
 export const translations: Record<Language, Translations> = {
@@ -124,7 +135,16 @@ export const translations: Record<Language, Translations> = {
     downloadCsv: "CSV letöltése",
 
     principalVsInterest: "Tőke vs Kamat",
-    balanceInterestPayment: "Egyenleg, Kamat és Törlesztés"
+    balanceInterestPayment: "Egyenleg, Kamat és Törlesztés",
+
+    advancedFeatures: "Haladó beállítások",
+    advancedSettings: "Haladó beállítások",
+
+    inflationCalculatorTitle: "Inflációval korrigált ingatlan érték",
+    currentPropertyValue: "Jelenlegi ingatlan érték (millió)",
+    expectedYearlyInflation: "Várható éves infláció (%)",
+    adjustedPropertyValue: "Korrigált ingatlan érték",
+    netEquity: "Nettó saját tőke"
   },
 
   en: {
@@ -181,7 +201,16 @@ export const translations: Record<Language, Translations> = {
     downloadCsv: "Download CSV",
 
     principalVsInterest: "Principal vs Interest",
-    balanceInterestPayment: "Balance, Interest & Payment"
+    balanceInterestPayment: "Balance, Interest & Payment",
+
+    advancedFeatures: "Advanced Settings",
+    advancedSettings: "Advanced Settings",
+
+    inflationCalculatorTitle: "Inflation-Adjusted Property Value",
+    currentPropertyValue: "Current Property Value (millions)",
+    expectedYearlyInflation: "Expected Yearly Inflation (%)",
+    adjustedPropertyValue: "Adjusted Property Value",
+    netEquity: "Net Equity"
   }
 }
 

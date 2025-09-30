@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useMemo } from 'react'
-import { RotateCcw } from 'lucide-react'
+import { RotateCcw, Settings2 } from 'lucide-react'
 
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -20,12 +20,14 @@ interface MortgageInputFormProps {
   totalMonths: number
   validationErrors: ValidationErrors
   hasValues: boolean
+  advancedFeaturesExpanded: boolean
   onLoanAmountChange: (value: string) => void
   onInterestRateChange: (value: string) => void
   onYearChange: (value: string) => void
   onMonthChange: (value: string) => void
   onLoanAmountBlur?: () => void
   onInterestRateBlur?: () => void
+  onToggleAdvancedFeatures: () => void
   onReset: () => void
 }
 
@@ -38,12 +40,14 @@ export function MortgageInputForm({
   totalMonths,
   validationErrors,
   hasValues,
+  advancedFeaturesExpanded,
   onLoanAmountChange,
   onInterestRateChange,
   onYearChange,
   onMonthChange,
   onLoanAmountBlur,
   onInterestRateBlur,
+  onToggleAdvancedFeatures,
   onReset
 }: MortgageInputFormProps) {
   const t = useMemo(() => getTranslation(language), [language])
@@ -136,6 +140,13 @@ export function MortgageInputForm({
 
       {/* Action Buttons */}
       <div className="flex gap-2 justify-end">
+        <Button
+          onClick={onToggleAdvancedFeatures}
+          variant={advancedFeaturesExpanded ? "default" : "outline"}
+        >
+          <Settings2 />
+          {t.advancedSettings}
+        </Button>
         <Button onClick={onReset} variant="outline" disabled={!hasValues}>
           <RotateCcw />
           {t.reset}

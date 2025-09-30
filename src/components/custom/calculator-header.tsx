@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Share2, Globe, Github, Clipboard, Share } from 'lucide-react'
+import { Share2, Globe, Github, Clipboard, Share, Settings2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -20,6 +20,10 @@ interface CalculatorHeaderProps {
   loanAmount: string
   totalMonths: number
   interestRate: string
+  currentPropertyValue?: string
+  expectedYearlyInflation?: string
+  advancedFeaturesExpanded: boolean
+  onToggleAdvancedFeatures: () => void
 }
 
 export function CalculatorHeader({
@@ -27,7 +31,11 @@ export function CalculatorHeader({
   onLanguageChange,
   loanAmount,
   totalMonths,
-  interestRate
+  interestRate,
+  currentPropertyValue,
+  expectedYearlyInflation,
+  advancedFeaturesExpanded,
+  onToggleAdvancedFeatures
 }: CalculatorHeaderProps) {
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false)
   const pathname = usePathname()
@@ -49,6 +57,8 @@ export function CalculatorHeader({
     if (loanAmount) params.set('amt', loanAmount)
     if (totalMonths > 0) params.set('term', totalMonths.toString())
     if (interestRate) params.set('rate', interestRate)
+    if (currentPropertyValue) params.set('propValue', currentPropertyValue)
+    if (expectedYearlyInflation) params.set('inflation', expectedYearlyInflation)
 
     const baseUrl = `${window.location.protocol}//${window.location.host}${pathname}`
     return params.toString() ? `${baseUrl}?${params.toString()}` : baseUrl

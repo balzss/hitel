@@ -3,11 +3,11 @@
 import React, { useMemo, useCallback, useState } from 'react'
 
 import { Card, CardContent } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
 import { CalculationLoader } from '@/components/custom/loader'
 import { MortgageInputForm } from '@/components/custom/mortgage-input-form'
 import { MortgageResults } from '@/components/custom/mortgage-results'
 import { AmortizationSchedule } from '@/components/custom/amortization-schedule'
+import { AdvancedFeaturesPanel } from '@/components/custom/advanced-features-panel'
 
 import { useMortgageInputs } from '@/hooks/use-mortgage-inputs'
 import { useMortgageValidation } from '@/hooks/use-mortgage-validation'
@@ -23,6 +23,8 @@ interface MortgageCalculatorProps {
     loanAmount: string
     totalMonths: number
     interestRate: string
+    currentPropertyValue?: string
+    expectedYearlyInflation?: string
   }) => void
 }
 
@@ -35,10 +37,16 @@ export function MortgageCalculator({ language, onValuesChange }: MortgageCalcula
     interestRate,
     totalMonths,
     hasValues,
+    currentPropertyValue,
+    expectedYearlyInflation,
+    advancedFeaturesExpanded,
     handleLoanAmountChange,
     handleInterestRateChange,
     handleYearChange,
     handleMonthChange,
+    handleCurrentPropertyValueChange,
+    handleExpectedYearlyInflationChange,
+    handleToggleAdvancedFeatures,
     handleReset
   } = useMortgageInputs({ language, onValuesChange })
 
@@ -94,7 +102,9 @@ export function MortgageCalculator({ language, onValuesChange }: MortgageCalcula
     loanAmount,
     interestRate,
     totalMonths,
-    allValidationErrors
+    allValidationErrors,
+    currentPropertyValue,
+    expectedYearlyInflation
   )
 
   // Memoized currency formatter
@@ -108,53 +118,67 @@ export function MortgageCalculator({ language, onValuesChange }: MortgageCalcula
   }, [currencyFormatter])
 
   return (
-    <Card className="mb-6">
-      <CardContent className="space-y-6">
-        <MortgageInputForm
+    <>
+      <Card className="mb-6">
+        <CardContent className="space-y-6">
+          <MortgageInputForm
+            language={language}
+            loanAmount={loanAmount}
+            loanTermYears={loanTermYears}
+            loanTermMonths={loanTermMonths}
+            interestRate={interestRate}
+            totalMonths={totalMonths}
+            validationErrors={validationErrors}
+            hasValues={hasValues}
+            advancedFeaturesExpanded={advancedFeaturesExpanded}
+            onLoanAmountChange={handleLoanAmountChangeWithClear}
+            onInterestRateChange={handleInterestRateChangeWithClear}
+            onYearChange={handleYearChange}
+            onMonthChange={handleMonthChange}
+            onLoanAmountBlur={handleLoanAmountBlur}
+            onInterestRateBlur={handleInterestRateBlur}
+            onToggleAdvancedFeatures={handleToggleAdvancedFeatures}
+            onReset={handleReset}
+          />
+        </CardContent>
+      </Card>
+
+      <div className="mb-6">
+        <AdvancedFeaturesPanel
           language={language}
-          loanAmount={loanAmount}
-          loanTermYears={loanTermYears}
-          loanTermMonths={loanTermMonths}
-          interestRate={interestRate}
-          totalMonths={totalMonths}
-          validationErrors={validationErrors}
-          hasValues={hasValues}
-          onLoanAmountChange={handleLoanAmountChangeWithClear}
-          onInterestRateChange={handleInterestRateChangeWithClear}
-          onYearChange={handleYearChange}
-          onMonthChange={handleMonthChange}
-          onLoanAmountBlur={handleLoanAmountBlur}
-          onInterestRateBlur={handleInterestRateBlur}
-          onReset={handleReset}
+          isExpanded={advancedFeaturesExpanded}
+          currentPropertyValue={currentPropertyValue}
+          expectedYearlyInflation={expectedYearlyInflation}
+          onCurrentPropertyValueChange={handleCurrentPropertyValueChange}
+          onExpectedYearlyInflationChange={handleExpectedYearlyInflationChange}
         />
+      </div>
 
-        {/* Results */}
-        {isCalculating && (
-          <>
-            <Separator />
+      {/* Results */}
+      {isCalculating && (
+        <Card className="mb-6">
+          <CardContent className="py-8">
             <CalculationLoader />
-          </>
-        )}
+          </CardContent>
+        </Card>
+      )}
 
-        {calculation && !isCalculating && (
-          <>
-            <Separator />
-            <MortgageResults
-              language={language}
-              calculation={calculation}
-              formatCurrency={formatCurrencyValue}
-            />
+      {calculation && !isCalculating && (
+        <>
+          <MortgageResults
+            language={language}
+            calculation={calculation}
+            formatCurrency={formatCurrencyValue}
+          />
 
-            <Separator />
-            <AmortizationSchedule
-              language={language}
-              calculation={calculation}
-              formatCurrency={formatCurrencyValue}
-              loanAmount={parseFloat(loanAmount)}
-            />
-          </>
-        )}
-      </CardContent>
-    </Card>
+          <AmortizationSchedule
+            language={language}
+            calculation={calculation}
+            formatCurrency={formatCurrencyValue}
+            loanAmount={parseFloat(loanAmount)}
+          />
+        </>
+      )}
+    </>
   )
 }

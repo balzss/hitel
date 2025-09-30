@@ -6,6 +6,9 @@ export interface MortgageData {
   loanTermMonths: string
   interestRate: string
   language: 'hu' | 'en'
+  currentPropertyValue?: string
+  expectedYearlyInflation?: string
+  advancedFeaturesExpanded?: boolean
 }
 
 const STORAGE_KEY = 'mortgage-calculator-data'
@@ -15,7 +18,10 @@ const defaultValues: MortgageData = {
   loanTermYears: '20',
   loanTermMonths: '0',
   interestRate: '7.5',
-  language: 'hu'
+  language: 'hu',
+  currentPropertyValue: '',
+  expectedYearlyInflation: '',
+  advancedFeaturesExpanded: false
 }
 
 function useMortgageStorage(): [MortgageData, (updates: Partial<MortgageData>) => void] {

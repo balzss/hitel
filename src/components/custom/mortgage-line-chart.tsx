@@ -15,11 +15,17 @@ const COLORS = {
   balance: 'var(--chart-purple)',   // Purple: #6929c4 (light) / #d4bbff (dark)
   interest: 'var(--chart-blue)',    // Blue: #002d9c (light) / #4589ff (dark)
   payment: 'var(--chart-teal)',     // Teal: #005d5d (light) / #08bdba (dark)
+  adjustedPropertyValue: 'var(--chart-1)', // Orange/red for property value
 }
 
 export function MortgageLineChart({ language, calculation, formatCurrency }: MortgageLineChartProps) {
   const t = useMemo(() => getTranslation(language), [language])
   
+  // Check if adjusted property value is available
+  const hasAdjustedPropertyValue = useMemo(() =>
+    calculation.amortizationSchedule.some(p => p.adjustedPropertyValue !== undefined)
+  , [calculation.amortizationSchedule])
+
   // Sample data points for the chart (every 12th month for performance)
   const chartData = useMemo(() => {
     return calculation.amortizationSchedule
@@ -29,17 +35,18 @@ export function MortgageLineChart({ language, calculation, formatCurrency }: Mor
         const cumulativePayments = calculation.amortizationSchedule
           .slice(0, payment.month)
           .reduce((sum, p) => sum + p.payment, 0)
-        
+
         const cumulativeInterest = calculation.amortizationSchedule
           .slice(0, payment.month)
           .reduce((sum, p) => sum + p.interest, 0)
-        
+
         return {
           month: payment.month,
           year: Math.ceil(payment.month / 12),
           balance: payment.balance,
           interest: cumulativeInterest, // Now shows cumulative interest
           payment: cumulativePayments, // Now shows cumulative payments
+          adjustedPropertyValue: payment.adjustedPropertyValue,
         }
       })
   }, [calculation.amortizationSchedule])
@@ -124,14 +131,24 @@ export function MortgageLineChart({ language, calculation, formatCurrency }: Mor
             name={t.interest}
             dot={false}
           />
-          <Line 
-            type="monotone" 
-            dataKey="payment" 
-            stroke={COLORS.payment} 
+          <Line
+            type="monotone"
+            dataKey="payment"
+            stroke={COLORS.payment}
             strokeWidth={2}
             name={t.payment}
             dot={false}
           />
+          {hasAdjustedPropertyValue && (
+            <Line
+              type="monotone"
+              dataKey="adjustedPropertyValue"
+              stroke={COLORS.adjustedPropertyValue}
+              strokeWidth={2}
+              name={t.adjustedPropertyValue}
+              dot={false}
+            />
+          )}
         </LineChart>
       </ResponsiveContainer>
     </div>

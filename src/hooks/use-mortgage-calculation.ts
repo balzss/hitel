@@ -6,7 +6,9 @@ export function useMortgageCalculation(
   loanAmount: string,
   interestRate: string,
   totalMonths: number,
-  validationErrors: ValidationErrors
+  validationErrors: ValidationErrors,
+  currentPropertyValue?: string,
+  expectedYearlyInflation?: string
 ) {
   const calculation = useMemo(() => {
     // Check if all required fields are present and not empty
@@ -23,8 +25,26 @@ export function useMortgageCalculation(
       return null
     }
 
-    return calculateMortgage(principal, rate, totalMonths)
-  }, [loanAmount, interestRate, totalMonths, validationErrors])
+    // Parse optional inflation parameters
+    let propertyValue: number | undefined
+    let inflation: number | undefined
+
+    if (currentPropertyValue && currentPropertyValue.trim() !== '') {
+      propertyValue = parseFloat(currentPropertyValue) * 1000000
+      if (isNaN(propertyValue) || propertyValue <= 0) {
+        propertyValue = undefined
+      }
+    }
+
+    if (expectedYearlyInflation && expectedYearlyInflation.trim() !== '') {
+      inflation = parseFloat(expectedYearlyInflation)
+      if (isNaN(inflation)) {
+        inflation = undefined
+      }
+    }
+
+    return calculateMortgage(principal, rate, totalMonths, propertyValue, inflation)
+  }, [loanAmount, interestRate, totalMonths, validationErrors, currentPropertyValue, expectedYearlyInflation])
 
   const isCalculating = useMemo(() => {
     // Check if all required fields are present and not empty

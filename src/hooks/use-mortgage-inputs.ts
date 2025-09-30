@@ -10,6 +10,8 @@ interface UseMortgageInputsProps {
     loanAmount: string
     totalMonths: number
     interestRate: string
+    currentPropertyValue?: string
+    expectedYearlyInflation?: string
   }) => void
 }
 
@@ -27,6 +29,9 @@ export function useMortgageInputs({ language, onValuesChange }: UseMortgageInput
   const [loanTermYears, setLoanTermYears] = useState('')
   const [loanTermMonths, setLoanTermMonths] = useState('')
   const [interestRate, setInterestRate] = useState('')
+  const [currentPropertyValue, setCurrentPropertyValue] = useState('')
+  const [expectedYearlyInflation, setExpectedYearlyInflation] = useState('')
+  const [advancedFeaturesExpanded, setAdvancedFeaturesExpanded] = useState(false)
 
   // Calculate total months from years and months
   const totalMonths = useMemo(() => {
@@ -114,6 +119,50 @@ export function useMortgageInputs({ language, onValuesChange }: UseMortgageInput
     }
   }, [router, pathname])
 
+  const handleCurrentPropertyValueChange = useCallback((value: string) => {
+    if (value === '') {
+      setCurrentPropertyValue('')
+    } else {
+      const numValue = parseFloat(value)
+      if (!isNaN(numValue) && numValue >= 0) {
+        setCurrentPropertyValue(value)
+      }
+    }
+
+    // Mark that we should ignore URL params from now on and clear URL
+    if (!shouldIgnoreUrlParams.current && window.location.search) {
+      shouldIgnoreUrlParams.current = true
+      // Clear URL asynchronously to not interfere with input
+      setTimeout(() => {
+        router.push(pathname)
+      }, 0)
+    }
+  }, [router, pathname])
+
+  const handleExpectedYearlyInflationChange = useCallback((value: string) => {
+    if (value === '') {
+      setExpectedYearlyInflation('')
+    } else {
+      const numValue = parseFloat(value)
+      if (!isNaN(numValue) && numValue >= -100 && numValue <= 100) {
+        setExpectedYearlyInflation(value)
+      }
+    }
+
+    // Mark that we should ignore URL params from now on and clear URL
+    if (!shouldIgnoreUrlParams.current && window.location.search) {
+      shouldIgnoreUrlParams.current = true
+      // Clear URL asynchronously to not interfere with input
+      setTimeout(() => {
+        router.push(pathname)
+      }, 0)
+    }
+  }, [router, pathname])
+
+  const handleToggleAdvancedFeatures = useCallback(() => {
+    setAdvancedFeaturesExpanded(prev => !prev)
+  }, [])
+
   const handleReset = useCallback(() => {
     if (localStorageTimeoutRef.current) {
       clearTimeout(localStorageTimeoutRef.current)
@@ -128,6 +177,8 @@ export function useMortgageInputs({ language, onValuesChange }: UseMortgageInput
     setLoanTermYears('')
     setLoanTermMonths('')
     setInterestRate('')
+    setCurrentPropertyValue('')
+    setExpectedYearlyInflation('')
 
     // Always clear URL parameters if they exist
     if (window.location.search) {
@@ -143,9 +194,11 @@ export function useMortgageInputs({ language, onValuesChange }: UseMortgageInput
     const urlLoanAmount = searchParams.get('amt')
     const urlTotalMonths = searchParams.get('term')
     const urlInterestRate = searchParams.get('rate')
+    const urlCurrentPropertyValue = searchParams.get('propValue')
+    const urlExpectedYearlyInflation = searchParams.get('inflation')
 
     // Check if we have URL parameters
-    const hasUrlParams = !!(urlLoanAmount || urlTotalMonths || urlInterestRate)
+    const hasUrlParams = !!(urlLoanAmount || urlTotalMonths || urlInterestRate || urlCurrentPropertyValue || urlExpectedYearlyInflation)
 
     if (hasUrlParams) {
       // Load from URL parameters
@@ -159,12 +212,22 @@ export function useMortgageInputs({ language, onValuesChange }: UseMortgageInput
       }
 
       setInterestRate(urlInterestRate || '')
+      setCurrentPropertyValue(urlCurrentPropertyValue || '')
+      setExpectedYearlyInflation(urlExpectedYearlyInflation || '')
+
+      // Expand advanced features if we have inflation params in URL
+      if (urlCurrentPropertyValue || urlExpectedYearlyInflation) {
+        setAdvancedFeaturesExpanded(true)
+      }
     } else {
       // Load from localStorage when no URL parameters
       setLoanAmount(storedData.loanAmount)
       setLoanTermYears(storedData.loanTermYears)
       setLoanTermMonths(storedData.loanTermMonths)
       setInterestRate(storedData.interestRate)
+      setCurrentPropertyValue(storedData.currentPropertyValue || '')
+      setExpectedYearlyInflation(storedData.expectedYearlyInflation || '')
+      setAdvancedFeaturesExpanded(storedData.advancedFeaturesExpanded || false)
     }
   }, [searchParams, storedData, isResetting])
 
@@ -181,8 +244,11 @@ export function useMortgageInputs({ language, onValuesChange }: UseMortgageInput
     loanTermYears,
     loanTermMonths,
     interestRate,
-    language
-  }), [loanAmount, loanTermYears, loanTermMonths, interestRate, language])
+    language,
+    currentPropertyValue,
+    expectedYearlyInflation,
+    advancedFeaturesExpanded
+  }), [loanAmount, loanTermYears, loanTermMonths, interestRate, language, currentPropertyValue, expectedYearlyInflation, advancedFeaturesExpanded])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -208,10 +274,12 @@ export function useMortgageInputs({ language, onValuesChange }: UseMortgageInput
       onValuesChange({
         loanAmount,
         totalMonths,
-        interestRate
+        interestRate,
+        currentPropertyValue,
+        expectedYearlyInflation
       })
     }
-  }, [onValuesChange, loanAmount, totalMonths, interestRate])
+  }, [onValuesChange, loanAmount, totalMonths, interestRate, currentPropertyValue, expectedYearlyInflation])
 
   // Cleanup timeouts on unmount
   useEffect(() => {
@@ -224,8 +292,8 @@ export function useMortgageInputs({ language, onValuesChange }: UseMortgageInput
 
   // Check if form has any values (for disabling reset button)
   const hasValues = useMemo(() => {
-    return !!(loanAmount || loanTermYears || loanTermMonths || interestRate)
-  }, [loanAmount, loanTermYears, loanTermMonths, interestRate])
+    return !!(loanAmount || loanTermYears || loanTermMonths || interestRate || currentPropertyValue || expectedYearlyInflation)
+  }, [loanAmount, loanTermYears, loanTermMonths, interestRate, currentPropertyValue, expectedYearlyInflation])
 
   return {
     // State
@@ -235,12 +303,18 @@ export function useMortgageInputs({ language, onValuesChange }: UseMortgageInput
     interestRate,
     totalMonths,
     hasValues,
+    currentPropertyValue,
+    expectedYearlyInflation,
+    advancedFeaturesExpanded,
 
     // Handlers
     handleLoanAmountChange,
     handleInterestRateChange,
     handleYearChange,
     handleMonthChange,
+    handleCurrentPropertyValueChange,
+    handleExpectedYearlyInflationChange,
+    handleToggleAdvancedFeatures,
     handleReset
   }
 }

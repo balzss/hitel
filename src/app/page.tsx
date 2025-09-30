@@ -14,6 +14,9 @@ function HomeContent() {
   const [loanAmount, setLoanAmount] = useState('')
   const [totalMonths, setTotalMonths] = useState(0)
   const [interestRate, setInterestRate] = useState('')
+  const [currentPropertyValue, setCurrentPropertyValue] = useState<string | undefined>('')
+  const [expectedYearlyInflation, setExpectedYearlyInflation] = useState<string | undefined>('')
+  const [advancedFeaturesExpanded, setAdvancedFeaturesExpanded] = useState(false)
 
   // Initialize language from localStorage
   useEffect(() => {
@@ -22,6 +25,10 @@ function HomeContent() {
 
   // Update page metadata when language changes
   usePageMetadata(language)
+
+  const handleToggleAdvancedFeatures = () => {
+    setAdvancedFeaturesExpanded(prev => !prev)
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -32,6 +39,10 @@ function HomeContent() {
           loanAmount={loanAmount}
           totalMonths={totalMonths}
           interestRate={interestRate}
+          currentPropertyValue={currentPropertyValue}
+          expectedYearlyInflation={expectedYearlyInflation}
+          advancedFeaturesExpanded={advancedFeaturesExpanded}
+          onToggleAdvancedFeatures={handleToggleAdvancedFeatures}
         />
         <MortgageCalculator
           language={language}
@@ -39,6 +50,8 @@ function HomeContent() {
             setLoanAmount(values.loanAmount)
             setTotalMonths(values.totalMonths)
             setInterestRate(values.interestRate)
+            setCurrentPropertyValue(values.currentPropertyValue)
+            setExpectedYearlyInflation(values.expectedYearlyInflation)
           }}
         />
       </div>
