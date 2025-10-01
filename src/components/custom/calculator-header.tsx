@@ -137,7 +137,7 @@ export function CalculatorHeader({
             <DialogHeader>
               <DialogTitle>{t.shareCalculation}</DialogTitle>
               <DialogDescription>
-                Share this mortgage calculation with others
+                {t.shareDescription}
               </DialogDescription>
             </DialogHeader>
             <div className="flex items-center space-x-2">

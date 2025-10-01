@@ -32,7 +32,7 @@ function HomeContent() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-4 max-w-4xl">
+      <div className="container mx-auto p-4 pb-16 max-w-4xl">
         <CalculatorHeader
           language={language}
           onLanguageChange={setLanguage}

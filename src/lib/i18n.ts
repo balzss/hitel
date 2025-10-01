@@ -36,6 +36,7 @@ export interface Translations {
 
   // Share dialog
   shareCalculation: string
+  shareDescription: string
   copyUrl: string
   urlCopied: string
   shareVia: string
@@ -110,6 +111,7 @@ export const translations: Record<Language, Translations> = {
     month: "Hónap",
 
     shareCalculation: "Számítás megosztása",
+    shareDescription: "Ossza meg ezt a lakáshitel számítást másokkal",
     copyUrl: "URL másolása",
     urlCopied: "URL másolva!",
     shareVia: "Megosztás...",
@@ -176,6 +178,7 @@ export const translations: Record<Language, Translations> = {
     month: "Month",
 
     shareCalculation: "Share Calculation",
+    shareDescription: "Share this mortgage calculation with others",
     copyUrl: "Copy URL",
     urlCopied: "URL Copied!",
     shareVia: "Share via...",
