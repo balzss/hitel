@@ -179,12 +179,25 @@ export function useMortgageInputs({ language, onValuesChange }: UseMortgageInput
     setInterestRate('')
     setCurrentPropertyValue('')
     setExpectedYearlyInflation('')
+    setAdvancedFeaturesExpanded(false)
+
+    // Clear localStorage immediately
+    updateStoredData({
+      loanAmount: '',
+      loanTermYears: '',
+      loanTermMonths: '',
+      interestRate: '',
+      language,
+      currentPropertyValue: '',
+      expectedYearlyInflation: '',
+      advancedFeaturesExpanded: false
+    })
 
     // Always clear URL parameters if they exist
     if (window.location.search) {
       router.push(pathname)
     }
-  }, [router, pathname])
+  }, [router, pathname, language, updateStoredData])
 
   // Initialize state from URL params and localStorage
   useEffect(() => {
