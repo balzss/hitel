@@ -39,3 +39,17 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE and editor settings
+.vscode/
+.claude/
+
+# MCP configuration
+.mcp.json
+.playwright-mcp/
+
+# project-specific
+memory/
+scripts/
+templates/
+ADVANCED_FEATURES_PLAN.md
